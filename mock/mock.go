@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"time"
+	"go.uber.org/zap"
 )
 
 type MockOptions struct {
@@ -17,7 +18,7 @@ type ExecResult struct {
 	Err        error
 }
 
-func PullImage(opts MockOptions) ExecResult {
+func PullImage(opts MockOptions, logger *zap.Logger) ExecResult {
 	if opts.Image == "" {
 		return ExecResult{
 			StatusCode: 1,
@@ -27,7 +28,7 @@ func PullImage(opts MockOptions) ExecResult {
 	}
 
 	if opts.Verbose {
-		fmt.Println("Starting pull for image:", opts.Image)
+		logger.Info("Starting pull for image:", zap.String("image", opts.Image))
 	}
 
 	// just simulating stuff than pulling it XD.
@@ -41,14 +42,16 @@ func PullImage(opts MockOptions) ExecResult {
 
 	for _, step := range steps {
 		if opts.Verbose {
-			fmt.Println(step)
+			logger.Info(step)
 		}
 		time.Sleep(500 * time.Millisecond)
 	}
 
+	message := fmt.Sprintf("Image %s pulled successfully", opts.Image)
+
 	return ExecResult{
 		StatusCode: 0,
-		Output:     fmt.Sprintf("Image %s pulled successfully", opts.Image),
+		Output:     message,
 		Err:        nil,
 	}
 }
