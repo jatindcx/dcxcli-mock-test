@@ -1,4 +1,4 @@
-package mockexecutor
+package mock
 
 import (
 	"errors"
